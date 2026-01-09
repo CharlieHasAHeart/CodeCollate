@@ -1,0 +1,35 @@
+# 这是CodeCollate-CLI-P项目的配置文件，遵循PEP 621标准。
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# --- 项目元数据 ---
+name = "codecollate-cli"
+version = "0.1.0"
+description = "一个专业的源代码整理工具，可将源代码集合格式化为符合特定规范的DOCX文档。"
+readme = "README.md"
+requires-python = "~=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Topic :: Text Processing",
+    "Topic :: Utilities",
+]
+
+dependencies = [
+    "python-docx",
+    "pyyaml",
+    "openai",
+    "python-dotenv[cli]",
+]
+
+# --- 命令行脚本入口点 ---
+[project.scripts]
+codecollate = "codecollate.cli:main"
+
+[tool.setuptools.package-data]
+"codecollate.data" = ["*.docx"]

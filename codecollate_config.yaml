@@ -1,0 +1,128 @@
+#codecollate_config.yaml
+# -------------------------------------------------------------------
+# § 0. 源代码处理设置 (新增部分)
+# -------------------------------------------------------------------
+source_processing:
+  # 定义要包含的源文件类型。程序会递归地查找所有匹配这些模式的文件。
+  # 示例: ['*.py', '*.java', '*.cs', '*.html', '*.js', '*.css', '*.ts']
+  include_extensions:
+    - '*.html'
+    - '*.js'
+    - '*.css'
+    - '*.py'
+    - '*.java'
+    - '*.ts'
+    - '*.tsx'
+  # 是否剥离注释 (轻量级处理，不做完整语法解析)
+  strip_comments: true
+  # 是否移除空行
+  strip_blank_lines: true
+  # 文本读取的编码回退列表
+  encoding_fallbacks:
+    - 'utf-8'
+    - 'utf-8-sig'
+    - 'gbk'
+    - 'latin-1'
+  # 需要排除的目录名称（相对 source_dir 任意层级匹配）
+  exclude_dirs:
+    - 'node_modules'
+    - '.git'
+    - 'dist'
+    - 'build'
+
+# -------------------------------------------------------------------
+# § 0.1 内容扩充设置
+# -------------------------------------------------------------------
+expansion:
+  # 是否启用扩充流程
+  enabled: true
+  # 扩充方式: llm | repeat | none
+  method: llm
+  # LLM 最大尝试次数
+  max_attempts: 5
+  # 目标文档页数 (用于估算扩充量)
+  target_page_count: 100
+  # 每页估算行数 (用于扩充量估算)
+  estimated_lines_per_page: 54
+  # 逻辑行到物理行的比例估算
+  logical_to_physical_ratio: 1.5
+  # 安全系数 (避免行数不足)
+  safety_multiplier: 1.25
+  # 重复扩充的标记行
+  repeat_marker: '/* === repeated block {index} === */'
+  # LLM 不可用或不足时是否回退重复扩充
+  fallback_to_repeat: true
+
+# -------------------------------------------------------------------
+# § 0.2 行折行设置
+# -------------------------------------------------------------------
+wrapping:
+  # 逻辑行在文档中的折行宽度
+  width: 85
+  # 折行后的缩进
+  subsequent_indent: '  '
+
+# -------------------------------------------------------------------
+# § 0.3 目标页数与行数估算
+# -------------------------------------------------------------------
+targets:
+  # DOCX 相关估算
+  docx_total_pages: 63
+  docx_lines_per_page: 57
+
+# -------------------------------------------------------------------
+# § 1. DOCX 文档生成设置
+# -------------------------------------------------------------------
+# 本节控制通过 python-docx 生成的 Word 文档的样式。
+docx:
+  # 2.1 页面设置
+  page_setup:
+    paper_size: A4              # 纸张大小 (目前主要用于参考)
+    orientation: portrait       # 页面方向: portrait (纵向) 或 landscape (横向)
+    margins:
+      top: 1.8                  # 上边距 (单位: 厘米)
+      bottom: 1.5               # 下边距 (单位: 厘米)
+      left: 1.8                 # 左边距 (单位: 厘米)
+      right: 1.8                # 右边距 (单位: 厘米)
+    header_footer_distance:
+      header_from_top: 1.0      # 页眉顶端距离页面顶端的距离 (单位: 厘米)
+      footer_from_bottom: 1.0   # 页脚底端距离页面底端的距离 (单位: 厘米)
+
+  # 2.2 样式定义
+  styles:
+    # 主要代码块的样式 (对应Word中的 "正文" 样式)
+    code_block:
+      font_name: 'Noto Sans Mono'  # 代码字体
+      font_size: 9              # 字号 (单位: 磅, pt)
+      line_spacing: 1.0         # 行距 (1.0 = 单倍行距, 1.5 = 1.5倍, etc.)
+      space_before: 0           # 段前距 (单位: 磅, pt)
+      space_after: 0            # 段后距 (单位: 磅, pt)
+    
+    # 页眉样式
+    header:
+      font_name: 'Calibri'      # 页眉字体 (可以使用非等宽字体)
+      font_size: 10
+      alignment: CENTER         # 对齐方式: LEFT, CENTER, RIGHT
+
+    # 页脚样式
+    footer:
+      font_name: 'Calibri'
+      font_size: 10
+      alignment: CENTER
+
+  # 2.3 页眉设置
+  header:
+    # 内容模板, {software_name} 和 {version} 将被代码自动替换
+    content: '{software_name} {version}'
+    border:
+      enable: true              # 是否启用下边框
+      position: bottom          # 边框位置 (目前只支持 bottom)
+      style: single             # 边框样式: single, double, dashed, dotted 等
+      size: 4                   # 边框粗细 (单位: 1/8 磅, 4 = 0.5pt, 8 = 1pt)
+      space: 1                  # 内容与边框的距离 (单位: 磅, pt)
+      color: 'auto'             # 边框颜色 (通常保持 auto)
+
+  # 2.4 页脚设置
+  footer:
+    # 内容模板, {page_number} 将被代码替换为自动页码
+    content: '{page_number}'
