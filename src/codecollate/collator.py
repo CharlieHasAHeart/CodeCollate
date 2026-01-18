@@ -339,8 +339,9 @@ You must follow all constraints precisely. You must generate a large volume of c
             """
 
             try:
+                model_name = os.getenv("CODECOLLATE_LLM_MODEL", "qwen3-coder-flash")
                 response = self.llm_client.chat.completions.create(
-                    model="qwen3-coder-flash",
+                    model=model_name,
                     messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
                     temperature=0.75,
                 )

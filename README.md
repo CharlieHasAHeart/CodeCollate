@@ -57,6 +57,7 @@ codecollate <SOURCE_DIR> <SOFTWARE_NAME> <VERSION> [OPTIONS]
 - `-w, --workdir`: **[可选]** 工作目录。未提供时会交互式提示。
 - `-v, --verbose`: **[可选]** 启用详细日志输出，方便调试。
 - `CODECOLLATE_CONFIG_PATH`: **[环境变量]** 指向配置文件路径，优先级高于 `--config` 和工作目录默认配置。
+- `CODECOLLATE_LLM_MODEL`: **[环境变量]** LLM 模型名称（默认 `qwen3-coder-flash`）。
 
 ### 示例
 
