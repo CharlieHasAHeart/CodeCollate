@@ -11,23 +11,23 @@ def setup_logging(verbose: bool) -> None:
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
         level=level,
-        format="%(levelname)s: %(message)s"
+        format="[%(levelname)s] %(message)s"
     )
 
 def _prompt_input(prompt: str) -> str:
-    return input(prompt).strip()
+    return input(f"[INPUT] {prompt}").strip()
 
 def _prompt_confirm(prompt: str, default: bool = True) -> bool:
     hint = "Y/n" if default else "y/N"
     while True:
-        value = input(f"{prompt} ({hint}): ").strip().lower()
+        value = input(f"[CONFIRM] {prompt} ({hint}): ").strip().lower()
         if not value:
             return default
         if value in {"y", "yes"}:
             return True
         if value in {"n", "no"}:
             return False
-        print("请输入 y 或 n。")
+        print("[ERROR] Please enter y or n.")
 
 def main() -> None:
     """命令行工具的主入口函数 (交互式, 支持配置)。"""
@@ -48,22 +48,22 @@ def main() -> None:
     args = parser.parse_args()
     
     setup_logging(args.verbose)
-    print("CodeCollate-CLI-P - 专业源代码文档整理工具")
+    print("[INFO] CodeCollate-CLI-P - Professional Source Code Document Tool")
 
     try:
         if not args.workdir:
             while True:
-                workdir_str = _prompt_input("请输入工作目录路径: ")
+                workdir_str = _prompt_input("Enter working directory path: ")
                 workdir_path = Path(workdir_str).resolve()
                 if workdir_path.is_dir():
                     args.workdir = str(workdir_path)
                     break
                 else:
-                    print(f"错误：工作目录 '{workdir_path}' 不存在或不是一个目录，请重新输入。")
+                    print(f"[ERROR] Working directory '{workdir_path}' does not exist or is not a directory.")
         else:
             workdir_path = Path(args.workdir).resolve()
             if not workdir_path.is_dir():
-                print(f"错误：命令行提供的工作目录 '{workdir_path}' 不存在或不是一个目录。")
+                print(f"[ERROR] Provided working directory '{workdir_path}' does not exist or is not a directory.")
                 sys.exit(1)
 
         os.chdir(workdir_path)
@@ -75,29 +75,29 @@ def main() -> None:
             input_path = Path(args.source_dir)
             source_path = (input_path if input_path.is_absolute() else workdir_path / input_path).resolve()
             if not source_path.is_dir():
-                print(f"错误：命令行提供的路径 '{source_path}' 不存在或不是一个目录。")
+                print(f"[ERROR] Provided source directory '{source_path}' does not exist or is not a directory.")
                 sys.exit(1)
 
         if not args.software_name:
-            args.software_name = _prompt_input("请输入软件名称: ")
+            args.software_name = _prompt_input("Enter software name: ")
         if not args.version:
-            args.version = _prompt_input("请输入版本号: ")
+            args.version = _prompt_input("Enter version: ")
 
         output_input_path = Path(args.output)
         output_path = (output_input_path if output_input_path.is_absolute() else workdir_path / output_input_path).resolve()
         args.output = str(output_path)
 
-        print("\n请确认以下信息：")
-        print(f"工作目录: {workdir_path}")
-        print(f"源代码目录: {args.source_dir}")
-        print(f"软件名称: {args.software_name}")
-        print(f"版本号: {args.version}")
-        print(f"输出目录: {args.output}")
+        print("\n[INFO] Please confirm the following:")
+        print(f"[INFO] Working directory: {workdir_path}")
+        print(f"[INFO] Source directory: {args.source_dir}")
+        print(f"[INFO] Software name: {args.software_name}")
+        print(f"[INFO] Version: {args.version}")
+        print(f"[INFO] Output directory: {args.output}")
         if args.config:
-            print(f"配置文件: {args.config}")
+            print(f"[INFO] Config file: {args.config}")
 
-        if not _prompt_confirm("是否开始执行整理任务？", default=True):
-            print("操作已取消。")
+        if not _prompt_confirm("Start the collation task?", default=True):
+            print("[INFO] Operation cancelled.")
             sys.exit(0)
 
         collator = SourceCodeCollator(
@@ -110,13 +110,13 @@ def main() -> None:
         
         docx_file = None
 
-        print("正在整理源代码，请稍候...")
+        print("[INFO] Processing source code, please wait...")
         docx_file = collator.run()
 
         if docx_file:
             print("\n" + "="*50)
-            print("源代码整理成功！")
-            print(f"Word 文档已生成: {docx_file.resolve()}")
+            print("[SUCCESS] Collation completed.")
+            print(f"[OUTPUT] Word document generated: {docx_file.resolve()}")
             print("="*50)
             
     except Exception as e:
