@@ -1,2 +1,0 @@
-[console_scripts]
-codecollate = codecollate.cli:main

@@ -1,4 +1,0 @@
-python-docx
-pyyaml
-openai
-python-dotenv[cli]
